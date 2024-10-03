@@ -306,6 +306,7 @@ class User {
         if (!contact) throw new Error("Contact not found.");
   
         contact.addDetail(type, value);
+        return true;
       } catch (error) {
         console.log(error);
       }
@@ -334,6 +335,7 @@ class User {
       try {
         const contact = this.getContactByID(contactID);
         contact.updateDetailByID(detailID, propertyName, newValue);
+        return true;
       } catch (error) {
         console.log(error);
       }
@@ -344,6 +346,7 @@ class User {
         const contact = this.getContactByID(contactID);
         contact.deleteDetailByID(detailID);
         console.log(`Detail with ID ${detailID} has been deleted from contact ${contactID}.`);
+        return true;
       } catch (error) {
         console.log(error);
       }
