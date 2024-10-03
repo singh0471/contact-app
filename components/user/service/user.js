@@ -255,6 +255,23 @@ class User {
           console.log(error);
         }
       }
+
+      getAllContacts(){
+        try{
+          if (this.isAdmin) throw new Error("Admins cannot access contacts.");
+          if (!this.getIsActive()) throw new Error("Inactive user cannot access contacts.");
+          let allContacts = [];
+        for (let contact of this.contacts) {
+      if (contact.getIsActive()) {
+        allContacts.push(contact);
+      }
+    }
+    return allContacts;
+        }
+        catch(error){
+          console.log(error);
+        }
+      }
       
   
     updateContactByID(contactID, propertyName, newValue) {
@@ -263,6 +280,7 @@ class User {
         
   
         contact.updateContact(propertyName, newValue);
+        return true;
       } catch (error) {
         console.log(error);
       }
@@ -275,6 +293,7 @@ class User {
   
         contact.deleteContact();
         console.log(`Contact with ID ${contactID} has been deleted.`);
+        return true;
       } catch (error) {
         console.log(error);
       }
