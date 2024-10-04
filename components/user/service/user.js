@@ -157,6 +157,7 @@ class User {
             default:
               throw new Error("Invalid property name.");
           }
+          return true;
         } catch (error) {
           console.log(error);
         }

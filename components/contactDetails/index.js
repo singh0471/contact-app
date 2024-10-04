@@ -1,5 +1,5 @@
 const express = require("express");
-const contactDetailsRouter = express();
+const contactDetailsRouter = express.Router({ mergeParams: true });
 
 const {getAllContactDetails,getContactDetailsByID,newContactDetails,updateContactDetail,deleteContactDetails} = require("./controller/controller.js")
 
@@ -7,7 +7,7 @@ const {getAllContactDetails,getContactDetailsByID,newContactDetails,updateContac
 contactDetailsRouter.get("/",getAllContactDetails);
 
 // all contact details by id
-contactDetailsRouter.get("/:id",getAllContactDetails);
+contactDetailsRouter.get("/:id",getContactDetailsByID);
 
 // new contact details 
 contactDetailsRouter.post("/",newContactDetails);

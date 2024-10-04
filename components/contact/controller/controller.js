@@ -1,14 +1,21 @@
-const User = require("../../user/service/user.js");
+// const User = require("../../user/service/user.js");
 
 
+// const admin1 = User.newAdmin("system","admin");
+
+const {User,admin1} = require("../../../admin.js");
 
 const getAllContacts = (req,res) => {
     try{
         const userID = parseInt(req.params.userID);
-        const user = User.getUserByID(userID);
+        const user = admin1.getStaffByID(userID);
         if(!user)
-            res.status(400).json({error:"user does not exist"});
+            throw new Error("invalid user id entered");
+        
         const allContacts = user.getAllContacts();
+
+        if(!allContacts)
+            throw new Error("could not fetch all contacts");
         res.status(200).json(allContacts);      
     }
     catch(error){
@@ -20,19 +27,20 @@ const getAllContacts = (req,res) => {
 const getContactsByID = (req,res) => {
     try{
         const userID = parseInt(req.params.userID);
-        
-        const id = parseInt(req.params.id);
         if(isNaN(userID))
-            res.status(400).json({error:"user does not exist"});
+            throw new error("invalid user id");
+
+        const id = parseInt(req.params.id);
         if(isNaN(id))
-            res.status(400).json({error:"contact does not exist"});
-        const user = User.getUserByID(userID);
+            throw new Error("invalid contact id");
+        const user = admin1.getStaffByID(userID);
+        
         if(!user)
-            return res.status(200).json({error:"user not found"});
+            throw new Error("user not found");
 
         const contact = user.getContactByID(id);
         if(!contact)
-            return res.status(200).json({error:"contact not found"});
+            throw new Error("contact not found");
         
         res.status(200).json(contact);      
     }
@@ -47,15 +55,23 @@ const newContact = (req,res) =>{
         const userID = parseInt(req.params.userID);
          
         if(isNaN(userID))
-            return res.status(400).json({error : "invalid user id"});
+            throw new Error("invalid user id");
+
         const {firstName,lastName} = req.body;
         if(!firstName)
-            return res.status(200).json({error:"invalid user name"});
+            throw new Error("invalid first name");
         if(!lastName)
-            return res.status(200).json({error:"invalid last name"});
+            throw new Error("invalid last name");
         
-        const user = User.getUserByID(userID);
+        const user = admin1.getStaffByID(userID);
+        if(!user)
+            throw new Error("user not found");
+
         const newContact = user.createContact(firstName,lastName);
+
+        if(!newContact)
+            throw new Error("could not create contact");
+
         res.status(200).json(newContact);
     }
     catch(error){
@@ -68,16 +84,27 @@ const updateContact = (req,res) => {
     try{
         const userID = parseInt(req.params.userID);
         if(isNaN(userID))
-            return res.status(400).json({error : "invalid user id"});
+            throw new Error("invalid user id");
+
         const id = parseInt(req.params.id);
+
+        if(isNaN(id))
+            throw new Error("invalid contact id");
+
         const {parameter,value} = req.body;
+
         if(!parameter)
-            return res.status(200).json({error:"invalid user name"});
+            throw new Error("invalid parameter entered");
         if(!value)
-            return res.status(200).json({error:"invalid last name"});
+            throw new Error("invalid value entered");
         
-        const user = User.getUserByID(userID);
+        const user = admin1.getStaffByID(userID);
+
+        if(!user)
+            throw new Error("user not found");
+
         const successfullyUpdated = user.updateContactByID(id,parameter,value);
+
         if(!successfullyUpdated)
             return res.status(200).json({error:"could not update contact"});
         
@@ -93,15 +120,21 @@ const deleteContact = (req,res) => {
     try{
         const userID = parseInt(req.params.userID);
         if(isNaN(userID))
-            return res.status(400).json({error : "invalid user id"});
+            throw new Error("invalid user id");
+
         const id = parseInt(req.params.id);
         if(isNaN(id))
-            return res.status(400).json({error : "invalid contact id"});
+            throw new Error("invalid contact id");
         
-        const user = User.getUserByID(userID);
+        const user = admin1.getStaffByID(userID);
+
+        if(!user)
+            throw new Error("user not found");
+
         const successfullyDeleted= user.deleteContactByID(id);
+
         if(!successfullyDeleted)
-            return res.status(200).json({error:"could not delete contact"});
+            throw new Error("could not delete contact");
         
         res.status(200).json({message: `contact id ${id} has been successfully deleted`});
     }

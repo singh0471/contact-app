@@ -3,7 +3,7 @@ const contactDetailsRouter = require("../contactDetails");
 const contactRouter = express.Router({ mergeParams: true });
 const {getAllContacts,getContactsByID,updateContact,newContact,deleteContact} = require("./controller/controller.js");
 const user = require("../user/service/user.js");
-//const user = require("../user/service/user.js");
+
 
 // get all contact ->
 contactRouter.get("/",getAllContacts);
