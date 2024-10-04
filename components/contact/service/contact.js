@@ -35,7 +35,12 @@ class Contact {
 
       getAllDetails(){
         try{
-          return this.contactDetails;
+          let allInfo = [];
+          for(let detail of this.contactDetails){
+            if(detail.getIsActive())
+              allInfo.push(detail);
+          }
+          return allInfo;
         }
         catch(error){
           console.log(error);
@@ -88,7 +93,9 @@ class Contact {
       
           for (let i = 0; i < this.contactDetails.length; i++) {
             const detail = this.contactDetails[i];
-            if (detail.getDetailID() === detailID) {
+            if (detail.getDetailID() === detailID ) {
+              if(!detail.getIsActive())
+                throw new Error("Detail does not exist.");
               return detail; 
             }
           }
@@ -124,7 +131,7 @@ class Contact {
             throw new Error("Contact is already inactive.");
           }
       
-          this.isActive = false;
+          this.#isActive = false;
           console.log(`Contact with ID ${this.getContactID()} has been deleted.`);
         } catch (error) {
           console.log(error);

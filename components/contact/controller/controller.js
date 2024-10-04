@@ -1,9 +1,5 @@
-// const User = require("../../user/service/user.js");
-
-
-// const admin1 = User.newAdmin("system","admin");
-
-const {User,admin1} = require("../../../admin.js");
+const User = require("../../user/service/user.js");
+const admin1 = User.newAdmin("system","admin");
 
 const getAllContacts = (req,res) => {
     try{

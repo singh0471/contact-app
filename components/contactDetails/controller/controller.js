@@ -1,8 +1,6 @@
-// const User = require("../../user/service/user.js");
+const User = require("../../user/service/user.js");
+const admin1 = User.newAdmin("system","admin");
 
-// const admin1 = User.newAdmin("system","admin");
-
-const {User,admin1} = require("../../../admin.js");
 
 const getAllContactDetails = (req,res) => {
     try{
@@ -170,7 +168,7 @@ const deleteContactDetails = (req,res) => {
         
         const contactDetail = user.deleteContactDetailByID(contactID,id);
         if(!contactDetail)
-            throw new Error("contact detail id deleted");
+            throw new Error("could not delete contact detail");
 
         res.status(200).json({message : `contact detail with id ${id} has been deleted successfully`});
     }

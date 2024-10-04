@@ -1,4 +1,6 @@
 const Contact = require("../../contact/service/contact.js");
+
+
 class User {
     static #allAdmins = [];
     static #allStaffs = [];

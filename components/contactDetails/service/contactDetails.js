@@ -63,7 +63,7 @@ class ContactDetail {
       }
     }
 
-    deleteDetail(){
+    deleteDetails(){
       try{
         this.#isActive = false;
       }

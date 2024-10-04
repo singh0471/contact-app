@@ -1,7 +1,8 @@
-// const User = require("../service/user.js");
-// const admin1 = User.newAdmin("System","Admin");
+const User = require("../service/user.js");
+const admin1 = User.newAdmin("system","admin");
 
-const {User,admin1} = require("../../../admin.js");
+
+
 
 const getAllUsers = (req,res) => {
     try{
