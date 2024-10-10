@@ -1,5 +1,5 @@
 const User = require("../service/user.js");
-const admin1 = User.newAdmin("system","admin");
+const cookieParser = require("cookie-parser");
 
 
 
@@ -21,7 +21,7 @@ const getUserByID = (req,res) => {
         
         if(isNaN(Number(id)))
             throw new Error("invalid user id entered");
-        
+        const admin1 = User.allAdmins[0];
         const userByID = admin1.getStaffByID(id); 
         
         if(!userByID)
@@ -36,16 +36,21 @@ const getUserByID = (req,res) => {
     }
 }
 
-const createNewUser = (req,res) => {
+const createNewUser = async (req,res) => {
     try{
-        const {firstName, lastName} = req.body;
-
+        const {firstName, lastName,username,password} = req.body;
+        const admin1 = User.allAdmins[0];
+        console.log(admin1);
         if(!firstName)
             throw new Error("invalid first name");
         if(!lastName)
             throw new Error("invalid last name");
+        if(!username)
+            throw new Error("invalid username");
+        if(!password)
+            throw new Error("invalid password");
 
-        const newUser = admin1.newStaff(firstName,lastName);
+        const newUser = await admin1.newStaff(firstName,lastName,username,password);
 
         if(!newUser)
             throw new Error("user could not be created");
@@ -55,7 +60,7 @@ const createNewUser = (req,res) => {
         res.status(500).json({error : "something went wrong"});
         console.log(error);
     }
-}
+}   
 
 
 
@@ -71,7 +76,7 @@ const updateUser = (req,res) =>{
             throw new Error("invalid value entered");
 
 
-
+        const admin1 = User.allAdmins[0];
         const isUpdated =  admin1.updateStaffByID(id,parameter,value);
 
         if(!isUpdated)
@@ -94,7 +99,7 @@ const deleteUser = (req,res) => {
         const id = parseInt(req.params.id);
         if(isNaN(id))
             throw new Error("invalid id entered");
-
+        const admin1 = User.allAdmins[0];
         const deleteStatus = admin1.deleteStaffByID(id);
         if(!deleteStatus)
             throw new Error("user could not be deleted");

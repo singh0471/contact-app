@@ -1,8 +1,9 @@
 const User = require("../../user/service/user.js");
-const admin1 = User.newAdmin("system","admin");
+
 
 const getAllContacts = (req,res) => {
     try{
+        const admin1 = User.allAdmins[0];
         const userID = parseInt(req.params.userID);
         const user = admin1.getStaffByID(userID);
         if(!user)
@@ -29,6 +30,7 @@ const getContactsByID = (req,res) => {
         const id = parseInt(req.params.id);
         if(isNaN(id))
             throw new Error("invalid contact id");
+        const admin1 = User.allAdmins[0];
         const user = admin1.getStaffByID(userID);
         
         if(!user)
@@ -58,8 +60,10 @@ const newContact = (req,res) =>{
             throw new Error("invalid first name");
         if(!lastName)
             throw new Error("invalid last name");
+        const admin1 = User.allAdmins[0];   
         
         const user = admin1.getStaffByID(userID);
+        
         if(!user)
             throw new Error("user not found");
 
@@ -93,7 +97,7 @@ const updateContact = (req,res) => {
             throw new Error("invalid parameter entered");
         if(!value)
             throw new Error("invalid value entered");
-        
+        const admin1 = User.allAdmins[0];
         const user = admin1.getStaffByID(userID);
 
         if(!user)
@@ -121,7 +125,7 @@ const deleteContact = (req,res) => {
         const id = parseInt(req.params.id);
         if(isNaN(id))
             throw new Error("invalid contact id");
-        
+        const admin1 = User.allAdmins[0];
         const user = admin1.getStaffByID(userID);
 
         if(!user)

@@ -1,5 +1,5 @@
 const User = require("../../user/service/user.js");
-const admin1 = User.newAdmin("system","admin");
+
 
 
 const getAllContactDetails = (req,res) => {
@@ -12,7 +12,7 @@ const getAllContactDetails = (req,res) => {
 
         if(isNaN(contactID))
             throw new Error("invalid contact id");
-
+        const admin1  = User.getAllAdmins()[0];
         const user = admin1.getStaffByID(userID);
 
         if(!user)
@@ -47,7 +47,7 @@ const getContactDetailsByID = (req,res) => {
 
         if(isNaN(id))
             throw new Error("invalid contact detail id");
-
+        const admin1  = User.getAllAdmins()[0];
         const user = admin1.getStaffByID(userID);
         if(!user)
             throw new Error("user not found");
@@ -78,13 +78,13 @@ const newContactDetails = (req,res) => {
         if(isNaN(contactID))
             throw new Error("invalid contact id");
         
-
+        const admin1  = User.getAllAdmins()[0];
         const user = admin1.getStaffByID(userID);
 
         if(!user)
             throw new Error("user not found");
 
-        
+         
 
         const {type,value} = req.body;
         if(!type)
@@ -127,7 +127,7 @@ const updateContactDetail = (req,res) => {
             throw new Error("invalid property");
         if(!value)
             throw new Error("invalid value");
-
+        const admin1  = User.getAllAdmins()[0];
         const user = admin1.getStaffByID(userID);
         if(!user)
             throw new Error("user not found");
@@ -160,7 +160,7 @@ const deleteContactDetails = (req,res) => {
         const id = parseInt(req.params.id);
         if(isNaN(id))
             throw new Error("invalid contact detail id");
-
+        const admin1  = User.getAllAdmins()[0];
         const user = admin1.getStaffByID(userID);
         if(!user)
             throw new Error("user not found");

@@ -2,22 +2,27 @@ const express = require("express");
 const contactRouter = require("../contact");
 const {getAllUsers,getUserByID,createNewUser,updateUser,deleteUser} = require("./controller/controller.js");
 const userRouter = express.Router();
+const {verifyAdmin,verifyStaff} = require("../../middleware/authorization.js");
+
+//  create admin
+
+
 
 // get all users
-userRouter.get("/",getAllUsers);
+userRouter.get("/",verifyAdmin,getAllUsers);
 
 // get users by id ->
-userRouter.get("/:id",getUserByID);
+userRouter.get("/:id",verifyAdmin,getUserByID);
 
 // create users ->
-userRouter.post("/",createNewUser);
+userRouter.post("/",verifyAdmin,createNewUser);
 
 // update user ->
-userRouter.put("/:id",updateUser);
+userRouter.put("/:id",verifyAdmin,updateUser);
 
 //delete users ->
-userRouter.delete("/:id",deleteUser);
+userRouter.delete("/:id",verifyAdmin,deleteUser);
 
 
-userRouter.use("/:userID/contact",contactRouter);
+userRouter.use("/:userID/contact",verifyStaff,contactRouter);
 module.exports = userRouter;

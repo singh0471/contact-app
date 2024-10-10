@@ -1,17 +1,25 @@
+const { use } = require("bcrypt/promises.js");
 const Contact = require("../../contact/service/contact.js");
-
+const bcrypt = require("bcrypt");
 
 class User {
-    static #allAdmins = [];
+    static allAdmins = [];
     static #allStaffs = [];
     static #allUserID = 0;
+    
   
     #userID;
+
+    // username and password.
+    #username;
+    #password;
   
-    constructor(userID, firstName, lastName, isAdmin, isActive, contacts) {
+    constructor(userID, firstName, lastName,username,password,isAdmin, isActive, contacts) {
       this.#userID = userID;
       this.firstName = firstName;
       this.lastName = lastName;
+      this.#username = username;
+      this.#password = password;
       this.isAdmin = isAdmin;
       this.isActive = isActive;
       this.contacts = contacts;
@@ -20,9 +28,17 @@ class User {
     getUserID() {
       return this.#userID;
     }
+
+    getUsername(){
+      return this.#username;
+    }
+
+    getPassword(){
+      return this.#password;
+    }
   
     static getAllAdmins() {
-      return this.#allAdmins;
+      return this.allAdmins;
     }
   
     static getAllStaffs() {
@@ -43,32 +59,99 @@ class User {
     getIsActive() {
       return this.isActive;
     }
+
+   
   
-    static newAdmin(firstName, lastName) {
+    static getUserByUsername(username){
+      try{
+
+        if(typeof username !== "string")
+          throw new Error("invalid username entered");
+
+        const admin = User.allAdmins.find(admin => admin.getUsername()===username);
+        if(admin)
+          return admin;
+
+        const user = User.#allStaffs.find(staff => staff.getUsername()===username);
+
+        if(user)
+          return user;
+
+        return null;
+      }
+      catch(error){
+        console.log(error);
+      }
+    }
+    
+     static async newAdmin(firstName, lastName, username, password) {
       try {
         if (typeof firstName !== "string") throw new Error("Invalid first name");
         if (typeof lastName !== "string") throw new Error("Invalid last name");
-  
+        if(typeof username !== "string") throw new Error("invalid username");
+        if(typeof password !== "string") throw new Error("invalid password");
+
+        if(User.getUserByUsername(username))
+          throw new Error("username already exist");
+        
+   
         const userID = User.#allUserID++;
-        const admin = new User(userID, firstName, lastName, true, true, []);
-        User.#allAdmins.push(admin);
+        
+        const hashedPassword = await bcrypt.hash(password,10);
+        const admin = new User(userID, firstName, lastName, username,hashedPassword, true, true, []);
+        User.allAdmins.push(admin);
+        
         return admin;
       } catch (error) {
         console.log(error);
       }
     }
   
-    newStaff(firstName, lastName) {
+      async newStaff(firstName, lastName,username,password) {
       try {
         if (!this.isAdmin) throw new Error("Only admins can create staff.");
         if (typeof firstName !== "string") throw new Error("Invalid first name");
         if (typeof lastName !== "string") throw new Error("Invalid last name");
-  
+        if(typeof username !== "string") throw new Error("invalid username");
+        if(typeof password !== "string") throw new Error("invalid password");
+
+        
+        if(User.getUserByUsername(username))
+          throw new Error("username already exist");
         const userID = User.#allUserID++;
-        const staff = new User(userID, firstName, lastName, false, true, []);
+        const hashedPassword =  await bcrypt.hash(password,10);
+        const staff = new User(userID, firstName, lastName,username,hashedPassword, false, true, []);
         User.#allStaffs.push(staff);
+        
         return staff;
       } catch (error) {
+        console.log(error);
+      }
+    }
+
+    static async login(username,password){
+      try{
+        if(typeof username !== "string")
+          throw new Error("invalid username");
+        if(typeof password !== "string")
+          throw new Error("invalid password");
+
+        const user = User.getUserByUsername(username);
+
+        if(!user)
+          throw new Error("invalid username");
+
+        const userPassword =  user.getPassword();
+
+        const loginSuccessful = await bcrypt.compare(password,userPassword);
+
+        if(!loginSuccessful)
+          throw new Error("Invalid password");
+
+        console.log("login successful");
+        return user;
+      }
+      catch(error){
         console.log(error);
       }
     }
@@ -80,8 +163,8 @@ class User {
           }
       
           
-          for (let i = 0; i < User.#allAdmins.length; i++) {
-            const user = User.#allAdmins[i];
+          for (let i = 0; i < User.allAdmins.length; i++) {
+            const user = User.allAdmins[i];
             if (user.getUserID() === userID && user.getIsActive()) {
               return user; 
             }
@@ -100,7 +183,7 @@ class User {
           console.log(error);
         }
       }
-
+  
       getStaffByID(staffID) {
         try {
           
@@ -112,8 +195,9 @@ class User {
           
           for (let i = 0; i < User.#allStaffs.length; i++) {
             const user = User.#allStaffs[i];
+            console.log(user.getUserID());
             if (user.getUserID() === staffID && user.getIsActive()) {
-              console.log(user);
+              
               return user;
             }}   
         } catch (error) {
@@ -355,6 +439,27 @@ class User {
       }
     }
   }
+
+
+  // (async () => {
+  //   try {
+  //     const admin = await User.newAdmin("John", "Doe", "johndoe", "password");
+  //     console.log(admin);
+  
+  //     const staff = await admin.newStaff("Jane", "Doe", "janedoe", "password");
+  //     console.log(staff);
+  
+  //     const loginObject = await User.login("janedoe", "password");
+  //     console.log(loginObject);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // })();
+
+
+  
+ 
+
   
 
 module.exports = User;
